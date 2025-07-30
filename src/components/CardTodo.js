@@ -1,46 +1,40 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import Checkbox from "expo-checkbox";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import Checkbox from 'expo-checkbox';
 
-export default function CardTodo({ title, completed, userName, onToggle }) {
+export default function CardTodo({ id, title, completed, userName, onToggle }) {
   return (
     <View style={styles.card}>
-      <View style={styles.header}>
-        <Checkbox value={completed} onValueChange={onToggle} color="#FD7C7C" />
-        <Text style={[styles.title, completed && styles.checked]}>{title}</Text>
+      <Text style={styles.title}>{title}</Text>
+      <Text>Usuário: {userName}</Text>
+      <View style={styles.checkboxContainer}>
+        <Checkbox value={completed} onValueChange={() => onToggle(id)} />
+        <Text style={styles.checkboxLabel}>
+          {completed ? 'Concluído' : 'Pendente'}
+        </Text>
       </View>
-      <Text style={styles.user}>Responsável: {userName}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
-    padding: 15,
-    margin: 10,
-    borderRadius: 10,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
+    backgroundColor: '#f9fbe7',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 12,
   },
   title: {
+    fontWeight: 'bold',
     fontSize: 16,
-    marginLeft: 10,
+    marginBottom: 6,
   },
-  checked: {
-    textDecorationLine: "line-through",
-    color: "#999",
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
   },
-  user: {
-    fontSize: 14,
-    color: "#555",
+  checkboxLabel: {
+    marginLeft: 8,
   },
 });

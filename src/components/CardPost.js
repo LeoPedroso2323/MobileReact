@@ -1,39 +1,30 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
-export default function CardPost({ title, body, userName }) {
+export default function CardPost({ title, body, author }) {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
-      <Text style={styles.body}>{body}</Text>
-      <Text style={styles.user}>Autor: {userName}</Text>
+      <Text>{body}</Text>
+      <Text style={styles.author}>Autor: {author}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
-    padding: 15,
-    margin: 10,
-    borderRadius: 10,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    backgroundColor: '#f0f0f0',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 12,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 6,
-  },
-  body: {
+    fontWeight: 'bold',
     fontSize: 16,
-    marginBottom: 8,
+    marginBottom: 4,
   },
-  user: {
-    fontSize: 14,
-    color: "#555",
+  author: {
+    marginTop: 6,
+    fontStyle: 'italic',
   },
 });

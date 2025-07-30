@@ -1,62 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { View, FlatList, ActivityIndicator, StyleSheet } from "react-native";
-import api from "../services/api";
-import CardPost from "../components/CardPost";
+import React from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
+import CardPost from '../components/CardPost';
 
-export default function Posts() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function Posts({ route }) {
+  const { posts, users } = route.params;
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const [postsRes, usersRes] = await Promise.all([
-          api.get("/posts"),
-          api.get("/users"),
-        ]);
-
-        const postsWithUser = postsRes.data.map((post) => {
-          const user = usersRes.data.find((u) => u.id === post.userId);
-          return {
-            ...post,
-            userName: user ? user.name : "Desconhecido",
-          };
-        });
-
-        setPosts(postsWithUser);
-      } catch (error) {
-        console.error("Erro ao carregar posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadData();
-  }, []);
-
-  if (loading) {
+  const renderItem = ({ item }) => {
+    const user = users.find((u) => u.id === item.userId);
     return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#FD7C7C" />
-      </View>
+      <CardPost
+        title={item.title}
+        body={item.body}
+        author={user?.name || 'Desconhecido'}
+      />
     );
-  }
+  };
 
   return (
-    <FlatList
-      data={posts}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <CardPost title={item.title} body={item.body} userName={item.userName} />
-      )}
-    />
+    <View style={styles.container}>
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  loading: {
+  container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 12,
+    backgroundColor: '#fff',
   },
 });

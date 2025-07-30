@@ -1,76 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { View, FlatList, ActivityIndicator, StyleSheet } from "react-native";
-import api from "../services/api";
-import CardTodo from "../components/CardTodo";
+import React, { useState } from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
+import CardTodo from '../components/CardTodo';
 
-export default function Todos() {
-  const [todos, setTodos] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+export default function Todos({ route }) {
+  const todos = route.params?.todos || [];
+  const users = route.params?.users || [];
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const [todosRes, usersRes] = await Promise.all([
-          api.get("/todos"),
-          api.get("/users"),
-        ]);
+  const [todosList, setTodosList] = useState(todos);
 
-        const todosComUsuario = todosRes.data.map((todo) => {
-          const user = usersRes.data.find((u) => u.id === todo.userId);
-          return {
-            ...todo,
-            userName: user ? user.name : "Desconhecido",
-          };
-        });
+  const toggleCompleted = (id) => {
+    const updated = todosList.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    );
+    setTodosList(updated);
+  };
 
-        setTodos(todosComUsuario);
-      } catch (error) {
-        console.error("Erro ao buscar tarefas:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadData();
-  }, []);
-
-  const toggleComplete = (id) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
+  const renderItem = ({ item }) => {
+    const user = users.find((u) => u.id === item.userId);
+    return (
+      <CardTodo
+        id={item.id}
+        title={item.title}
+        completed={item.completed}
+        userName={user?.name || 'Desconhecido'}
+        onToggle={toggleCompleted}
+      />
     );
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#FD7C7C" />
-      </View>
-    );
-  }
-
   return (
-    <FlatList
-      data={todos}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <CardTodo
-          title={item.title}
-          completed={item.completed}
-          userName={item.userName}
-          onToggle={() => toggleComplete(item.id)}
-        />
-      )}
-    />
+    <View style={styles.container}>
+      <FlatList
+        data={todosList}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  loading: {
+  container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 12,
+    backgroundColor: '#fff',
   },
 });
